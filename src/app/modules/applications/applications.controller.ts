@@ -15,6 +15,28 @@ const submitApplication = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllApplications = catchAsync(async (req: Request, res: Response) => {
+  const result = await ApplicationServices.getAllApplications();
+  sendResponse<Application[]>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Applications retrieved successfully',
+    data: result,
+  });
+});
+
+const getApplicationById = catchAsync(async (req: Request, res: Response) => {
+  const result = await ApplicationServices.getApplicationById(req.params.id);
+  sendResponse<Application>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Application retrieved successfully',
+    data: result,
+  });
+});
+
 export const ApplicationController = {
   submitApplication,
+  getAllApplications,
+  getApplicationById,
 };

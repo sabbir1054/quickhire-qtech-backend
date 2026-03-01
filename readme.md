@@ -111,15 +111,37 @@ Server runs at `http://localhost:5000`
 
 ### Job
 
-| Field       | Type     | Description     |
-| ----------- | -------- | --------------- |
-| id          | UUID     | Primary key     |
-| title       | String   | Job title       |
-| company     | String   | Company name    |
-| location    | String   | Job location    |
-| category    | String   | Job category    |
-| description | String   | Job description |
-| createdAt   | DateTime | Auto-generated  |
+| Field       | Type     | Description                          |
+| ----------- | -------- | ------------------------------------ |
+| id          | UUID     | Primary key                          |
+| title       | String   | Job title                            |
+| company     | String   | Company name                         |
+| location    | LOCATION | Enum - Bangladesh 64 districts + Remote |
+| category    | CATEGORY | Enum - Design, Sales, Marketing, etc |
+| description | String   | Job description                      |
+| createdAt   | DateTime | Auto-generated                       |
+
+### Enums
+
+**LOCATION** (Bangladesh 64 Districts + Remote):
+
+```
+Dhaka, Chittagong, Rajshahi, Khulna, Sylhet, Rangpur, Barishal, Mymensingh,
+Comilla, Gazipur, Narayanganj, Tangail, Bogra, Dinajpur, Jessore, Cox_s_Bazar,
+Brahmanbaria, Narsingdi, Savar, Tongi, Faridpur, Jamalpur, Pabna, Habiganj,
+Moulvibazar, Sunamganj, Kushtia, Natore, Nawabganj, Rajbari, Sirajganj, Joypurhat,
+Naogaon, Nilphamari, Kurigram, Lalmonirhat, Gaibandha, Thakurgaon, Panchagarh,
+Sherpur, Netrokona, Kishoreganj, Narail, Satkhira, Bagerhat, Magura, Meherpur,
+Chuadanga, Jhenaidah, Gopalganj, Madaripur, Shariatpur, Munshiganj, Manikganj,
+Pirojpur, Barguna, Jhalokati, Bhola, Patuakhali, Chandpur, Lakshmipur, Noakhali,
+Feni, Khagrachhari, Rangamati, Bandarban, Remote
+```
+
+**CATEGORY**:
+
+```
+Design, Sales, Marketing, Finance, Technology, Engineering, Business, Human_Resource
+```
 
 ### Application
 
@@ -295,6 +317,9 @@ Content-Type: application/json
 }
 ```
 
+> `location` must be a valid **LOCATION** enum value (e.g., Dhaka, Chittagong, Remote).
+> `category` must be a valid **CATEGORY** enum value (e.g., Engineering, Design, Marketing, Finance, Technology, Sales, Business, Human_Resource).
+
 **Response:** `200 OK`
 
 ```json
@@ -322,17 +347,16 @@ Content-Type: application/json
 
 #### Query Parameters
 
-| Parameter  | Type   | Default   | Description                                                        |
-| ---------- | ------ | --------- | ------------------------------------------------------------------ |
-| searchTerm | string | -         | Search across title, company, location, category, description (case insensitive) |
-| title      | string | -         | Filter by exact title                                              |
-| company    | string | -         | Filter by exact company                                            |
-| location   | string | -         | Filter by exact location                                           |
-| category   | string | -         | Filter by exact category                                           |
-| page       | number | 1         | Page number                                                        |
-| limit      | number | 10        | Items per page                                                     |
-| sortBy     | string | createdAt | Sort field (title, company, location, category, createdAt)         |
-| sortOrder  | string | desc      | Sort direction (`asc` or `desc`)                                   |
+| Parameter  | Type     | Default   | Description                                                  |
+| ---------- | -------- | --------- | ------------------------------------------------------------ |
+| searchTerm | string   | -         | Search across title, company, description (case insensitive) |
+| company    | string   | -         | Filter by exact company name                                 |
+| location   | LOCATION | -         | Filter by enum value (e.g., Dhaka, Remote, Chittagong)       |
+| category   | CATEGORY | -         | Filter by enum value (e.g., Engineering, Design, Marketing)  |
+| page       | number   | 1         | Page number                                                  |
+| limit      | number   | 10        | Items per page                                               |
+| sortBy     | string   | createdAt | Sort field (title, company, location, category, createdAt)   |
+| sortOrder  | string   | desc      | Sort direction (`asc` or `desc`)                             |
 
 #### 5a. Default (No Query Params)
 
@@ -377,7 +401,7 @@ Content-Type: application/json
 
 **GET** `/api/v1/jobs?searchTerm=developer`
 
-Searches across **title, company, location, category, description** (partial match, case insensitive).
+Searches across **title, company, description** (partial match, case insensitive).
 
 **Response:** `200 OK`
 

@@ -25,6 +25,27 @@ const submitApplication = async (payload: IApplication) => {
   return result;
 };
 
+const getAllApplications = async () => {
+  const result = await prisma.application.findMany({
+    include: { job: true },
+    orderBy: { createdAt: 'desc' },
+  });
+  return result;
+};
+
+const getApplicationById = async (id: string) => {
+  const result = await prisma.application.findUnique({
+    where: { id },
+    include: { job: true },
+  });
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Application not found');
+  }
+  return result;
+};
+
 export const ApplicationServices = {
   submitApplication,
+  getAllApplications,
+  getApplicationById,
 };
