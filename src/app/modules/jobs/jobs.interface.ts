@@ -1,7 +1,9 @@
+import { CATEGORY, LOCATION } from '@prisma/client';
+
 export type IJob = {
   title: string;
   company: string;
-  location: string;
-  category: string;
+  location: LOCATION;
+  category: CATEGORY;
   description: string;
 };

@@ -1,8 +1,11 @@
 import { Job } from '@prisma/client';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
+import { paginationFields } from '../../../constants/paginationFields';
 import catchAsync from '../../../shared/catchAsync';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
+import { jobFilterableFields } from './jobs.constant';
 import { JobServices } from './jobs.services';
 
 const createJob = catchAsync(async (req: Request, res: Response) => {
@@ -16,12 +19,15 @@ const createJob = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllJobs = catchAsync(async (req: Request, res: Response) => {
-  const result = await JobServices.getAllJobs();
+  const filters = pick(req.query, jobFilterableFields);
+  const options = pick(req.query, paginationFields);
+  const result = await JobServices.getAllJobs(filters, options);
   sendResponse<Job[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Jobs retrieved successfully',
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

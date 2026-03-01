@@ -15,6 +15,87 @@ enum ROLE {
   USER
 }
 
+enum LOCATION {
+  Dhaka
+  Chittagong
+  Rajshahi
+  Khulna
+  Sylhet
+  Rangpur
+  Barishal
+  Mymensingh
+  Comilla
+  Gazipur
+  Narayanganj
+  Tangail
+  Bogra
+  Dinajpur
+  Jessore
+  Cox_s_Bazar
+  Brahmanbaria
+  Narsingdi
+  Savar
+  Tongi
+  Faridpur
+  Jamalpur
+  Pabna
+  Habiganj
+  Moulvibazar
+  Sunamganj
+  Kushtia
+  Natore
+  Nawabganj
+  Rajbari
+  Sirajganj
+  Joypurhat
+  Naogaon
+  Nilphamari
+  Kurigram
+  Lalmonirhat
+  Gaibandha
+  Thakurgaon
+  Panchagarh
+  Sherpur
+  Netrokona
+  Kishoreganj
+  Narail
+  Satkhira
+  Bagerhat
+  Magura
+  Meherpur
+  Chuadanga
+  Jhenaidah
+  Gopalganj
+  Madaripur
+  Shariatpur
+  Munshiganj
+  Manikganj
+  Pirojpur
+  Barguna
+  Jhalokati
+  Bhola
+  Patuakhali
+  Chandpur
+  Lakshmipur
+  Noakhali
+  Feni
+  Khagrachhari
+  Rangamati
+  Bandarban
+  Remote
+}
+
+enum CATEGORY {
+  Design
+  Sales
+  Marketing
+  Finance
+  Technology
+  Engineering
+  Business
+  Human_Resource
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -29,8 +110,8 @@ model Job {
   id           String        @id @default(uuid())
   title        String
   company      String
-  location     String
-  category     String
+  location     LOCATION
+  category     CATEGORY
   description  String
   createdAt    DateTime      @default(now())
   applications Application[]

@@ -240,7 +240,7 @@ Server runs at `http://localhost:5000`
 **Headers:**
 
 ```
-Authorization: <accessToken>
+Authorization: Bearer <accessToken>
 ```
 
 **Request:**
@@ -279,7 +279,7 @@ Authorization: <accessToken>
 **Headers:**
 
 ```
-Authorization: <accessToken>
+Authorization: Bearer <accessToken>
 Content-Type: application/json
 ```
 
@@ -316,7 +316,25 @@ Content-Type: application/json
 
 ---
 
-### 5. Get All Jobs
+### 5. Get All Jobs (Search, Filter & Pagination)
+
+**GET** `/api/v1/jobs`
+
+#### Query Parameters
+
+| Parameter  | Type   | Default   | Description                                                        |
+| ---------- | ------ | --------- | ------------------------------------------------------------------ |
+| searchTerm | string | -         | Search across title, company, location, category, description (case insensitive) |
+| title      | string | -         | Filter by exact title                                              |
+| company    | string | -         | Filter by exact company                                            |
+| location   | string | -         | Filter by exact location                                           |
+| category   | string | -         | Filter by exact category                                           |
+| page       | number | 1         | Page number                                                        |
+| limit      | number | 10        | Items per page                                                     |
+| sortBy     | string | createdAt | Sort field (title, company, location, category, createdAt)         |
+| sortOrder  | string | desc      | Sort direction (`asc` or `desc`)                                   |
+
+#### 5a. Default (No Query Params)
 
 **GET** `/api/v1/jobs`
 
@@ -327,15 +345,319 @@ Content-Type: application/json
   "statusCode": 200,
   "success": true,
   "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 7,
+    "page": 1,
+    "limit": 10
+  },
   "data": [
     {
-      "id": "d3f87045-3d1f-42d1-bc47-7215b5a844ef",
+      "id": "5bf31463-24c4-4266-8f77-9fd62689f5b7",
+      "title": "Node.js Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build scalable backend services with Node.js and Express",
+      "createdAt": "2026-03-01T10:26:07.390Z"
+    },
+    {
+      "id": "7cca81e4-9784-484e-b818-4fd1ba9ff63c",
+      "title": "Data Analyst",
+      "company": "QTech",
+      "location": "Chittagong",
+      "category": "Analytics",
+      "description": "SQL and Python for data analysis",
+      "createdAt": "2026-03-01T10:26:07.317Z"
+    }
+  ]
+}
+```
+
+#### 5b. Search by Keyword
+
+**GET** `/api/v1/jobs?searchTerm=developer`
+
+Searches across **title, company, location, category, description** (partial match, case insensitive).
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 4,
+    "page": 1,
+    "limit": 10
+  },
+  "data": [
+    {
+      "id": "5bf31463-24c4-4266-8f77-9fd62689f5b7",
+      "title": "Node.js Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build scalable backend services with Node.js and Express",
+      "createdAt": "2026-03-01T10:26:07.390Z"
+    },
+    {
+      "id": "a1dcd4bb-7135-4440-ac91-8fd4f0f49589",
       "title": "Frontend Developer",
       "company": "TechCorp",
       "location": "Remote",
       "category": "Engineering",
       "description": "React and TypeScript expertise needed",
-      "createdAt": "2026-03-01T05:59:15.203Z"
+      "createdAt": "2026-03-01T10:26:07.108Z"
+    },
+    {
+      "id": "5e46b4f0-2793-46f1-b545-003932fc8bfb",
+      "title": "Backend Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build REST APIs with Node.js",
+      "createdAt": "2026-03-01T05:59:04.049Z"
+    }
+  ]
+}
+```
+
+#### 5c. Filter by Category
+
+**GET** `/api/v1/jobs?category=Engineering`
+
+Filters by **exact match** on category field.
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 4,
+    "page": 1,
+    "limit": 10
+  },
+  "data": [
+    {
+      "id": "5bf31463-24c4-4266-8f77-9fd62689f5b7",
+      "title": "Node.js Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build scalable backend services with Node.js and Express",
+      "createdAt": "2026-03-01T10:26:07.390Z"
+    },
+    {
+      "id": "8c478e29-9bb2-4881-a0d5-6a4b9c65a48e",
+      "title": "DevOps Engineer",
+      "company": "CloudNine",
+      "location": "Remote",
+      "category": "Engineering",
+      "description": "AWS, Docker, Kubernetes experience",
+      "createdAt": "2026-03-01T10:26:07.247Z"
+    }
+  ]
+}
+```
+
+#### 5d. Filter by Location
+
+**GET** `/api/v1/jobs?location=Remote`
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 2,
+    "page": 1,
+    "limit": 10
+  },
+  "data": [
+    {
+      "id": "8c478e29-9bb2-4881-a0d5-6a4b9c65a48e",
+      "title": "DevOps Engineer",
+      "company": "CloudNine",
+      "location": "Remote",
+      "category": "Engineering",
+      "description": "AWS, Docker, Kubernetes experience",
+      "createdAt": "2026-03-01T10:26:07.247Z"
+    },
+    {
+      "id": "a1dcd4bb-7135-4440-ac91-8fd4f0f49589",
+      "title": "Frontend Developer",
+      "company": "TechCorp",
+      "location": "Remote",
+      "category": "Engineering",
+      "description": "React and TypeScript expertise needed",
+      "createdAt": "2026-03-01T10:26:07.108Z"
+    }
+  ]
+}
+```
+
+#### 5e. Filter by Company
+
+**GET** `/api/v1/jobs?company=QTech`
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 3,
+    "page": 1,
+    "limit": 10
+  },
+  "data": [
+    {
+      "id": "5bf31463-24c4-4266-8f77-9fd62689f5b7",
+      "title": "Node.js Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build scalable backend services with Node.js and Express",
+      "createdAt": "2026-03-01T10:26:07.390Z"
+    },
+    {
+      "id": "7cca81e4-9784-484e-b818-4fd1ba9ff63c",
+      "title": "Data Analyst",
+      "company": "QTech",
+      "location": "Chittagong",
+      "category": "Analytics",
+      "description": "SQL and Python for data analysis",
+      "createdAt": "2026-03-01T10:26:07.317Z"
+    },
+    {
+      "id": "5e46b4f0-2793-46f1-b545-003932fc8bfb",
+      "title": "Backend Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build REST APIs with Node.js",
+      "createdAt": "2026-03-01T05:59:04.049Z"
+    }
+  ]
+}
+```
+
+#### 5f. Pagination
+
+**GET** `/api/v1/jobs?page=1&limit=2`
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 7,
+    "page": 1,
+    "limit": 2
+  },
+  "data": [
+    {
+      "id": "5bf31463-24c4-4266-8f77-9fd62689f5b7",
+      "title": "Node.js Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build scalable backend services with Node.js and Express",
+      "createdAt": "2026-03-01T10:26:07.390Z"
+    },
+    {
+      "id": "7cca81e4-9784-484e-b818-4fd1ba9ff63c",
+      "title": "Data Analyst",
+      "company": "QTech",
+      "location": "Chittagong",
+      "category": "Analytics",
+      "description": "SQL and Python for data analysis",
+      "createdAt": "2026-03-01T10:26:07.317Z"
+    }
+  ]
+}
+```
+
+> Use `meta.total` to calculate total pages: `Math.ceil(total / limit)`
+
+#### 5g. Sorting
+
+**GET** `/api/v1/jobs?sortBy=title&sortOrder=asc`
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 7,
+    "page": 1,
+    "limit": 10
+  },
+  "data": [
+    {
+      "id": "5e46b4f0-2793-46f1-b545-003932fc8bfb",
+      "title": "Backend Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build REST APIs with Node.js",
+      "createdAt": "2026-03-01T05:59:04.049Z"
+    },
+    {
+      "id": "7cca81e4-9784-484e-b818-4fd1ba9ff63c",
+      "title": "Data Analyst",
+      "company": "QTech",
+      "location": "Chittagong",
+      "category": "Analytics",
+      "description": "SQL and Python for data analysis",
+      "createdAt": "2026-03-01T10:26:07.317Z"
+    }
+  ]
+}
+```
+
+#### 5h. Combined (Search + Filter + Pagination)
+
+**GET** `/api/v1/jobs?searchTerm=node&category=Engineering&page=1&limit=2`
+
+Searches for "node" keyword **within** the Engineering category.
+
+**Response:** `200 OK`
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Jobs retrieved successfully",
+  "meta": {
+    "total": 2,
+    "page": 1,
+    "limit": 2
+  },
+  "data": [
+    {
+      "id": "5bf31463-24c4-4266-8f77-9fd62689f5b7",
+      "title": "Node.js Developer",
+      "company": "QTech",
+      "location": "Dhaka",
+      "category": "Engineering",
+      "description": "Build scalable backend services with Node.js and Express",
+      "createdAt": "2026-03-01T10:26:07.390Z"
     },
     {
       "id": "5e46b4f0-2793-46f1-b545-003932fc8bfb",
@@ -395,7 +717,7 @@ Content-Type: application/json
 **Headers:**
 
 ```
-Authorization: <accessToken>
+Authorization: Bearer <accessToken>
 ```
 
 **Response:** `200 OK`

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx prisma:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
